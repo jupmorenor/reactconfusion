@@ -72,7 +72,7 @@ class Contact extends Component {
             errors.telnum = 'Not a telephone number';
         }
 
-        if (this.state.touched.email && email.split('').filter(x => x === '@').length != 1) {
+        if (this.state.touched.email && email.split('').filter(x => x === '@').length !== 1) {
             errors.email = 'Must have @'
         }
         return errors;
