@@ -1,6 +1,80 @@
-import React from 'react';
-import { Card, CardImg, CardText, CardTitle, CardBody, Breadcrumb, BreadcrumbItem } from 'reactstrap';
+import React, { Component } from 'react';
+import { Card, CardImg, CardText, CardTitle, CardBody, Breadcrumb, BreadcrumbItem, Button, Modal, ModalHeader, ModalBody, Row, Label, Col } from 'reactstrap';
 import { Link } from 'react-router-dom'
+import { Control, LocalForm, Errors } from 'react-redux-form';
+
+const maxLength = (len) => (val) => !(val) || (val.length <= len);
+const minLength = (len) => (val) => (val) && (val.length >= len); 
+
+class CommentForm extends Component {
+    constructor(props) {
+        super();
+        this.state = {
+            isModalOpen: false
+        }
+        this.toggleModal = this.toggleModal.bind(this);
+        this.handleComment = this.handleComment.bind(this);
+    }
+
+    toggleModal() {
+        this.setState({
+            isModalOpen: !this.state.isModalOpen
+        })
+    }
+
+    handleComment(comment) {
+        console.log("Comment: " + JSON.stringify(comment));
+        alert("Comment: " + JSON.stringify(comment));
+        this.toggleModal();
+    }
+
+    render() {
+        return (
+            <>
+                <Button outline onClick={this.toggleModal} ><span className="fa fa-pencil fa-lg"></span> Submit Comment</Button>
+                <Modal toggle={this.toggleModal} isOpen={this.state.isModalOpen}>
+                    <ModalHeader toggle={this.toggleModal}>Submit Comment</ModalHeader>
+                    <ModalBody>
+                        <LocalForm onSubmit={(comment) => this.handleComment(comment)} >
+                            <Row className="form-group" >
+                                <Col className="col-12">
+                                    <Label for="rating" >Rating: </Label>
+                                    <Control.select model=".rating" className="form-control" id="rating" name="rating" >
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                        <option value="5">5</option>
+                                    </Control.select>
+                                </Col>
+                            </Row>
+                            <Row className="form-group" >
+                                <Col>
+                                    <Label for="author" >Your name: </Label>
+                                    <Control.text model=".author" className="form-control" id="author" name="author" placeholder="Your name" 
+                                    validators={{minLength: minLength(3), maxLength: maxLength(15)}} />
+                                    <Errors className="text-danger" model=".author" show="touched"
+                                    messages={{minLength: "Must be greater than 2 characters", maxLength: "Must be 15 characters or less"}} />
+                                </Col>
+                            </Row>
+                            <Row className="form-group" >
+                                <Col>
+                                    <Label for="comment" >Comment</Label>
+                                    <Control.textarea model=".comment" className="form-control" id="comment" name="comment" rows="6" />
+                                </Col>
+                            </Row>
+                            <Row className="form-group" >
+                                <Col>
+                                    <Button type="submit" color="primary">Submit</Button>
+                                </Col>
+                            </Row>
+                        </LocalForm>
+                    </ModalBody>
+                </Modal>
+            </>
+        );
+    }
+}
 
 function RenderComments({comments}) {
     return (
@@ -21,6 +95,7 @@ function RenderComments({comments}) {
                 })
             }
             </ul>
+            <CommentForm />
         </div>
     );
 }
